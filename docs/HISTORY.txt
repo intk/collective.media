@@ -1,5 +1,9 @@
 Changelog
 =========
+0.11 (2014-09-16)
+---------------------
+- Automatically creates a slideshow folder for all folderish pages
+
 0.10 (2013-02-19)
 ---------------------
 - Catalogging UIDs instead of URLs to avoid a mess with zeoclusters.
