@@ -3,11 +3,11 @@ Changelog
 
 0.12 (2014-09-25)
 ---------------------
-- Automatically updates lead media when slideshow is changed
+- Automatically updates lead media when slideshow is changed [andreg]
 
 0.11 (2014-09-16)
 ---------------------
-- Automatically creates a slideshow folder for all folderish pages
+- Automatically creates a slideshow folder for all folderish pages [andreg]
 
 0.10 (2013-02-19)
 ---------------------
