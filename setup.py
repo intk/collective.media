@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '0.11'
+version = '0.12'
 
 setup(name='collective.media',
       version=version,
@@ -18,7 +18,7 @@ setup(name='collective.media',
       author='David Jonas, Andre Goncalves',
       author_email='david@intk.com, andre@intk.com',
       url='https://github.com/intk/collective.media',
-      download_url='https://github.com/intk/collective.media/tarball/0.11'
+      download_url='https://github.com/intk/collective.media/tarball/0.12',
       license='GPL',
       packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['collective'],

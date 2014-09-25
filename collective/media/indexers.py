@@ -9,6 +9,7 @@ def folderish_hasMedia(object, **kw):
     
 @indexer(IFolderish)
 def folderish_getLeadMedia(object, **kw):
+    #print "re indexer"
     lead = ICanContainMedia(object).getLeadMedia()
     if lead is not None:
         return lead.UID
@@ -21,6 +22,7 @@ def collection_hasMedia(object, **kw):
     
 @indexer(ICollection)
 def collection_getLeadMedia(object, **kw):
+    #print "re indexer"
     lead = ICanContainMedia(object).getLeadMedia()
     if lead is not None:
         return lead.UID

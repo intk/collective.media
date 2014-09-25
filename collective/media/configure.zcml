@@ -73,6 +73,5 @@
         for="plone.app.collection.interfaces.ICollection
         zope.lifecycleevent.interfaces.IObjectModifiedEvent"
         handler="collective.media.events.reindexMedia" />
-
   
 </configure>
