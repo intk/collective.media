@@ -53,11 +53,24 @@
 
   <class class="Products.mediaPage.content.mediapage.MediaPage">
       <implements interface=".interfaces.IMediaTypes" />
+  </class>
+
+  <class class="Products.mediaPerson.content.mediaperson.MediaPerson">
+      <implements interface=".interfaces.IMediaTypes" />
     </class>
   
   <class class="Products.mediaEvent.content.mediaevent.MediaEvent">
       <implements interface=".interfaces.IMediaTypes" />
   </class>
+
+  <class class="Products.mediaLink.content.medialink.MediaLink">
+      <implements interface=".interfaces.IMediaTypes" />
+  </class>
+
+  <subscriber
+        for="collective.media.interfaces.IMediaTypes
+        Products.LinguaPlone.events.IObjectTranslatedEvent"
+        handler=".events.mediaObjectTranslated" />
 
   <subscriber
         for="collective.media.interfaces.IMediaTypes

@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.14 (2014-10-13)
+---------------------
+- Added media person as folderish item [andreg]
+
+0.13 (2014-10-10)
+---------------------
+- Added translation support [andreg]
+
 0.12 (2014-09-25)
 ---------------------
 - Automatically updates lead media when slideshow is changed [andreg]
