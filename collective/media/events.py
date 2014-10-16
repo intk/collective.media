@@ -12,7 +12,7 @@ import requests, json
 
 def reindexMediaPage(object):
     if hasattr(object, "portal_type"):
-        if object.portal_type == "MediaPage":
+        if object.portal_type == "MediaPage" or object.portal_type == "MediaPerson":
             #print "Reindexing MediaPage"
             object.reindexObject(idxs=['hasMedia'])
             object.reindexObject(idxs=['leadMedia'])
