@@ -5,10 +5,13 @@ from zope.lifecycleevent.interfaces import ISequence
 from Products.CMFCore.interfaces import IFolderish
 from Products.ATContentTypes.interfaces.image import IATImage
 import urllib, cStringIO
+from cStringIO import StringIO
 from plone.namedfile.field import NamedBlobImage
 from plone import namedfile
 import urlparse
 import requests, json
+from plone.app.imagecropping.at import CroppingUtilsArchetype
+import PIL
 
 def reindexMediaPage(object):
     if hasattr(object, "portal_type"):
@@ -16,6 +19,8 @@ def reindexMediaPage(object):
             #print "Reindexing MediaPage"
             object.reindexObject(idxs=['hasMedia'])
             object.reindexObject(idxs=['leadMedia'])
+            object.reindexObject(idxs=['getLeadMediaTag'])
+            object.reindexObject(idxs=['getLeadImageTag'])
 
 def reindexMedia(object, event):
     """
@@ -25,6 +30,9 @@ def reindexMedia(object, event):
         #print "Reindexing %s"%object.id
         object.reindexObject(idxs=["hasMedia"])
         object.reindexObject(idxs=["leadMedia"])
+        object.reindexObject(idxs=['getLeadMediaTag'])
+        object.reindexObject(idxs=['getLeadImageTag'])
+        
         #print "Finished reindexing %s"%object.id
         reindexMediaPage(object.getParentNode())
         
@@ -81,7 +89,6 @@ def mediaObjectAdded(ob, event):
             if hasattr(ob, "portal_type"):
                     if ob.portal_type == "MediaLink":
                         createThumbnailImage(folder, ob.remoteUrl)
-
 
 def mediaObjectTranslated(ob, event):
     #print "media object was translated"

@@ -2,4 +2,7 @@
 <object name="portal_catalog" meta_type="Plone Catalog Tool">
  <column value="hasMedia"/>
  <column value="leadMedia"/>
+ <column value="getLeadMediaTag"/>
+<column value="getLeadImageTag"/>
+
 </object>
