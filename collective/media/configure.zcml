@@ -71,12 +71,17 @@
   </class>
 
   
-  <!-- <subscriber
+  <subscriber
       for="plone.app.blob.interfaces.IATBlobImage
-      Products.DCWorkflow.interfaces.IAfterTransitionEvent
+      zope.lifecycleevent.interfaces.IObjectModifiedEvent
       "
-      handler=".events.imageObjectCreated"/> -->
+      handler=".events.imageObjectCreated"/>
 
+  <subscriber
+      for="collective.media.interfaces.IMediaTypes
+      Products.CMFCore.interfaces.IActionSucceededEvent
+      "
+      handler=".events.workflowSucceeded"/>
 
   <subscriber
         for="collective.media.interfaces.IMediaTypes

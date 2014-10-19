@@ -13,6 +13,9 @@ import requests, json
 from plone.app.imagecropping.at import CroppingUtilsArchetype
 import PIL
 
+from zope.annotation.interfaces import IAnnotations
+from plone.app.imagecropping import PAI_STORAGE_KEY
+
 def reindexMediaPage(object):
     if hasattr(object, "portal_type"):
         if object.portal_type == "MediaPage" or object.portal_type == "MediaPerson":
@@ -65,12 +68,13 @@ def createThumbnailImage(folder, link):
         image.setImage(file_data)
         image.reindexObject()
 
+
 def mediaObjectAdded(ob, event):
     #
     # Event that is triggred when a MediaPage is created
     # Create a folder slideshow for the new MediaPage
     #
-    print "Media Object was added!"
+    #print "Media Object was added!"
 
     if 'slideshow' not in ob.objectIds():
         if not ob.checkCreationFlag():
@@ -87,34 +91,185 @@ def mediaObjectAdded(ob, event):
                 pass
 
             if hasattr(ob, "portal_type"):
-                    if ob.portal_type == "MediaLink":
+                if ob.portal_type == "MediaLink":
+                    try:
                         createThumbnailImage(folder, ob.remoteUrl)
+                    except:
+                        pass
 
+#
+# TRANSLATION AND CROPS
+#
+def hasCrops(ob):
+    #
+    # Check if object has crops defined
+    #
+    annotations = IAnnotations(ob).get(PAI_STORAGE_KEY)
+    if annotations != None:
+        if 'image_collection' not in annotations.keys():
+            return False
+        else:
+            return True
+    else:
+        return False
+
+def addCropToTranslation(original, translated):
+    # Add crops if original has crops
+    if hasCrops(original):
+        fieldname = 'image'
+        scale = 'collection'
+        view = original.restrictedTraverse('@@crop-image')
+
+        box = view._storage['{0:s}_{1:s}'.format(fieldname, scale)]
+
+        # Create new crops
+        translated_view = translated.restrictedTraverse('@@crop-image')
+        translated_view._crop(fieldname, scale, box)
+
+        # Re-index current crops
+        view._crop(fieldname, scale, box)
+
+#
+# Event fired when media object is translated
+#
 def mediaObjectTranslated(ob, event):
-    #print "media object was translated"
-
+    
     slideshow = None
 
     language_to_translate = event.language
     original_object = event.object
 
+    #
+    # Get type folder content
+    # Check if slideshow is present
+    #
     brains = original_object.getFolderContents()
     for b in brains:
         if b.id == 'slideshow':
             slideshow = b.getObject()
             break
 
+    # return if no slideshow in folder
     if slideshow == None:
         return
 
-    #print "translate slideshow folder"
-    slideshow.addTranslation(language_to_translate)
+    try:
+        # Add translation to sideshow
+        slideshow.addTranslation(language_to_translate)
+        slideshow_translated = slideshow.getTranslation(language_to_translate)
+        slideshow_translated.showinsearch = False
 
-    target_object = event.target
+        # Re-index slideshow
+        slideshow_translated.reindexObject()
+    except:
+        # Already translated
+        pass
 
-    #print "translate folder content"
+    #
+    # Publish translated slideshow
+    # Re-index slideshow after publication
+    #
+    try:
+        slideshow_translated.portal_workflow.doActionFor(slideshow_translated, 'publish', comment="Slideshow content automatically published")
+        slideshow_translated.reindexObject()
+    except:
+        # Already published
+        pass
+
+    #
+    # Translate all content from slideshow
+    #
     slideshow_content = slideshow.getFolderContents()
     for item in slideshow_content:
         item_object = item.getObject()
-        item_object.addTranslation(language_to_translate)
+        try:
+            item_object.addTranslation(language_to_translate)
+            
+            # Re-index item after translation
+            item_object.reindexObject()
+
+            item_translated = item_object.getTranslation(language_to_translate)
+            if item_object.portal_type == "Image":
+                # Add crops to translated item
+                addCropToTranslation(item_object, item_translated)
+            # Re-index translated item
+            item_translated.reindexObject()
+        except:
+            # Already translated
+            pass
+
+#
+# CROPPING
+#
+def autoCropImage(ob):
+    if not hasCrops(ob):
+        view = ob.restrictedTraverse('@@crop-image')
+        w = ob.width
+        h = ob.height
+
+        #
+        # Make crop centered
+        #
+        if w > h:
+            delta = w - h
+            left = int(delta/2)
+            upper = 0
+            right = h + left
+            lower = h
+        else:
+            delta = h - w
+            left = 0
+            upper = int(delta/2)
+            right = w
+            lower = w + upper
+
+        box = (left, upper, right, lower)
+
+        view._crop(fieldname='image', scale="collection", box=box)
+        ob.reindexObject()
+
+#
+# Auto crop all images from page slideshow
+#
+def autoCropImagesFromPage(ob):
+    slideshow = None
+
+    # Check if slideshow in folder contents
+    brains = ob.getFolderContents()
+    for brain in brains:
+        if brain.id == 'slideshow':
+            slideshow = brain.getObject()
+            break
+
+    # Auto crop every image inside slideshow folder
+    if slideshow != None:
+        slideshow_content = slideshow.getFolderContents()
+        for item in slideshow_content:
+            item_object = item.getObject()
+            if item_object.portal_type == "Image":
+                autoCropImage(item_object)
+            elif item_object.portal_type == "MediaPage" or item_object.portal_type == "Media Person":
+                #
+                # Object is a page
+                # Recursive call to auto crop
+                # all images from page inside slideshow
+                #
+                autoCropImagesFromPage(item_object)
+    else:
+        # No slideshow folder
+        return False
+
+def imageObjectCreated(ob, event):
+    #
+    # New image is ready
+    #
+    if ob.portal_type == "Image":
+        autoCropImage(ob)
+    
+
+def workflowSucceeded(ob, event):
+    if ob.portal_type == "MediaPage" or ob.portal_type == "Media Person":
+        #print "Media type workflow succeeded"
+        if event.action == "publish":
+            autoCropImagesFromPage(ob)
 
