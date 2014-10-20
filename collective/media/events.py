@@ -18,7 +18,7 @@ from plone.app.imagecropping import PAI_STORAGE_KEY
 
 def reindexMediaPage(object):
     if hasattr(object, "portal_type"):
-        if object.portal_type == "MediaPage" or object.portal_type == "MediaPerson":
+        if object.portal_type == "MediaPage" or object.portal_type == "Media Person" or object.portal_type == "MediaLink":
             #print "Reindexing MediaPage"
             object.reindexObject(idxs=['hasMedia'])
             object.reindexObject(idxs=['leadMedia'])
@@ -133,7 +133,6 @@ def addCropToTranslation(original, translated):
 # Event fired when media object is translated
 #
 def mediaObjectTranslated(ob, event):
-    
     slideshow = None
 
     language_to_translate = event.language
@@ -189,10 +188,17 @@ def mediaObjectTranslated(ob, event):
             item_object.reindexObject()
 
             item_translated = item_object.getTranslation(language_to_translate)
+            
             if item_object.portal_type == "Image":
                 # Add crops to translated item
                 addCropToTranslation(item_object, item_translated)
+            
             # Re-index translated item
+            if item_translated.portal_type == "MediaPage" or item_translated.portal_type == "Media Person":
+                ob.reindexObject(idxs=['hasMedia'])
+                ob.reindexObject(idxs=['leadMedia'])
+                ob.reindexObject(idxs=['getLeadMediaTag'])
+                ob.reindexObject(idxs=['getLeadImageTag'])
             item_translated.reindexObject()
         except:
             # Already translated
@@ -248,7 +254,7 @@ def autoCropImagesFromPage(ob):
             item_object = item.getObject()
             if item_object.portal_type == "Image":
                 autoCropImage(item_object)
-            elif item_object.portal_type == "MediaPage" or item_object.portal_type == "Media Person":
+            elif item_object.portal_type == "MediaPage" or item_object.portal_type == "Media Person" or item_object.portal_type == "MediaLink":
                 #
                 # Object is a page
                 # Recursive call to auto crop
@@ -272,4 +278,8 @@ def workflowSucceeded(ob, event):
         #print "Media type workflow succeeded"
         if event.action == "publish":
             autoCropImagesFromPage(ob)
+            ob.reindexObject(idxs=["hasMedia"])
+            ob.reindexObject(idxs=["leadMedia"])
+            ob.reindexObject(idxs=['getLeadMediaTag'])
+            ob.reindexObject(idxs=['getLeadImageTag'])
 
