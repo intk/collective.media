@@ -24,11 +24,14 @@ def reindexMediaPage(object):
             object.reindexObject(idxs=['leadMedia'])
             object.reindexObject(idxs=['getLeadMediaTag'])
             object.reindexObject(idxs=['getLeadImageTag'])
-
+            
 def reindexMedia(object, event):
     """
         reindexes Media catalog indexes on the parent
     """
+
+    print "re index media catalog"
+
     if object.id != "whatson":
         #print "Reindexing %s"%object.id
         object.reindexObject(idxs=["hasMedia"])
@@ -37,6 +40,7 @@ def reindexMedia(object, event):
         object.reindexObject(idxs=['getLeadImageTag'])
         
         #print "Finished reindexing %s"%object.id
+        
         reindexMediaPage(object.getParentNode())
         
 

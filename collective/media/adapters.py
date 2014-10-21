@@ -38,7 +38,7 @@ class MediaHandling(object):
             results = item.queryCatalog()
             
         resultArray = []
-        
+
         for res in results:
             if res.portal_type == "Image":
                 resultArray.append(res)
@@ -47,27 +47,39 @@ class MediaHandling(object):
             elif item.portal_type == "Collection" and res.hasMedia and res.portal_type != "Collection":
                 #If the item is a collection then we need to look inside of all items manually to find media
                 resultArray.append(ICanContainMedia(res.getObject()).getLeadMedia())
-        
+
+        if len(resultArray) == 0:
+            if len(item.getFolderContents()) == 0:
+                return False
+
         return resultArray
     
     def hasMedia(self):
         """
         Check if item has media
         """
-        return len(self.getMedia()) > 0
+        hasMedia = self.getMedia()
+        if hasMedia != False:
+            return len(self.getMedia()) > 0
+        else:
+            return True
     
     def getLeadMedia(self):
         """
         Get the lead media
         """
+
         media = self.getMedia()
-        if len(media) > 0:
-            #TODO: This gathers only Images for now. Need to add video support
-            for item in media:
-                if item.portal_type == "Image":
-                    return item
-        
-        return None
+        if media != False:
+            if len(media) > 0:
+                #TODO: This gathers only Images for now. Need to add video support
+                for item in media:
+                    if item.portal_type == "Image":
+                        return item
+            
+            return None
+        else:
+            return False
     
     def markLeadMedia(self, item):
         """

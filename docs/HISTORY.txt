@@ -3,9 +3,13 @@ Changelog
 
 0.19 (2014-10-19)
 ---------------------
+- Fixed support for reindexes in translations
+
+0.19 (2014-10-19)
+---------------------
 - Added auto cropping feature [andreg]
 - Auto-cropping all slideshow content in folderish types [andreg]
-- Auto-cropping working with translations
+- Auto-cropping working with translations [andreg]
 
 0.14 (2014-10-13)
 ---------------------

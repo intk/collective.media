@@ -9,36 +9,37 @@ def folderish_hasMedia(object, **kw):
     
 @indexer(IFolderish)
 def folderish_getLeadMedia(object, **kw):
-    #print "re indexer"
     lead = ICanContainMedia(object).getLeadMedia()
-    if lead is not None:
-        return lead.UID
-    else:
-        return None
+    if lead != False:
+        if lead is not None:
+            return lead.UID
+        else:
+            return None
 
 @indexer(IFolderish)
 def folderish_getLeadMediaTag(object, **kw):
     lead = ICanContainMedia(object).getLeadMedia()
-    if lead is not None:
-        if hasattr(lead, 'getURL'):
-            return lead.getURL()
+    if lead != False:
+        if lead is not None:
+            if hasattr(lead, 'getURL'):
+                return lead.getURL()
+            else:
+                return lead.absolute_url()
         else:
-            return lead.absolute_url()
-    else:
-        return None
+            return None
 
 @indexer(IFolderish)
 def folderish_getLeadImageTag(object, **kw):
     #print "re indexer get lead image tag"
     lead = ICanContainMedia(object).getLeadMedia()
-    print lead.getURL()
-    if lead is not None:
-        if hasattr(lead, 'getURL'):
-            return lead.getURL()
+    if lead != False:
+        if lead is not None:
+            if hasattr(lead, 'getURL'):
+                return lead.getURL()
+            else:
+                return lead.absolute_url()
         else:
-            return lead.absolute_url()
-    else:
-        return None
+            return None
     
 @indexer(ICollection)
 def collection_hasMedia(object, **kw):
@@ -48,8 +49,9 @@ def collection_hasMedia(object, **kw):
 def collection_getLeadMedia(object, **kw):
     #print "re indexer"
     lead = ICanContainMedia(object).getLeadMedia()
-    if lead is not None:
-        return lead.UID
-    else:
-        return None
+    if lead != False:
+        if lead is not None:
+            return lead.UID
+        else:
+            return None
     
