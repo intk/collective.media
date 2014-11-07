@@ -1,24 +1,24 @@
 from setuptools import setup, find_packages
 import os
 
-version = '0.21'
+version = '0.0.5'
 
-setup(name='collective.media',
+setup(name='collective.leadingmedia',
       version=version,
-      description="Adds functionality to retrieve and prioritize media inside of folderish items.",
+      description="Adds functionality to retrieve and prioritize media inside of dexterity containers.",
       long_description=open("README.txt").read() + "\n" +
-                       open(os.path.join("docs", "HISTORY.txt")).read(),
+                       open("docs/HISTORY.txt").read(),
       # Get more strings from
       # http://pypi.python.org/pypi?%3Aaction=list_classifiers
       classifiers=[
         "Framework :: Plone",
         "Programming Language :: Python",
         ],
-      keywords='folderish media',
-      author='David Jonas, Andre Goncalves',
-      author_email='david@intk.com, andre@intk.com',
-      url='https://github.com/intk/collective.media',
-      download_url='https://github.com/intk/collective.media/tarball/0.12',
+      keywords='leading media',
+      author='Andre Goncalves',
+      author_email='andre@intk.com',
+      url='https://github.com/intk/collective.leadingmedia',
+      download_url='https://github.com/intk/collective.leadingmedia/tarball/0.0.3',
       license='GPL',
       packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['collective'],

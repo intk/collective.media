@@ -1,0 +1,26 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:plone="http://namespaces.plone.org/plone"
+i18n_domain="collective.leadingmedia">
+
+	<browser:page
+         for="plone.app.contenttypes.interfaces.IFolder"
+         name="folder_leadmedia_view"
+         class=".views.FolderLeadMediaView"
+         template="templates/folder_leadmedia_view.pt"
+         layer="..interfaces.ILeadMediaSpecific"
+         permission="zope2.View"
+         allowed_attributes="tag"
+    />
+
+    <browser:menuItem
+        for="plone.app.contenttypes.interfaces.IFolder"
+        menu="plone_displayviews"
+        title="Folder lead-media view"
+        action="folder_leadmedia_view"
+        layer="..interfaces.ILeadMediaSpecific"
+        description="View with lead media displayed"
+    />
+
+</configure>

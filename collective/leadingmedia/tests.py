@@ -9,7 +9,7 @@ from Products.PloneTestCase import PloneTestCase as ptc
 from Products.PloneTestCase.layer import PloneSite
 ptc.setupPloneSite()
 
-import collective.media
+import collective.leadingmedia
 
 
 class TestCase(ptc.PloneTestCase):

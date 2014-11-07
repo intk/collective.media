@@ -1,8 +1,9 @@
+# Setup handlers
+
 import logging
 from Products.CMFCore.utils import getToolByName
 # The profile id of your package:
-PROFILE_ID = 'profile-collective.media:default'
-
+PROFILE_ID = 'profile-collective.leadingmedia:default'
 
 def add_catalog_indexes(context, logger=None):
     """Method to add our wanted indexes to the portal_catalog.
@@ -16,7 +17,7 @@ def add_catalog_indexes(context, logger=None):
     """
     if logger is None:
         # Called as upgrade step: define our own logger.
-        logger = logging.getLogger('collective.media')
+        logger = logging.getLogger('collective.leadingmedia')
     
     # Run the catalog.xml step as that may have defined new metadata
     # columns.  We could instead add <depends name="catalog"/> to
@@ -30,12 +31,11 @@ def add_catalog_indexes(context, logger=None):
     catalog = getToolByName(context, 'portal_catalog')
     indexes = catalog.indexes()
     
-    print "ADDING COLLECTIVE MEDIA INDEXES"
+    print "ADDING COLLECTIVE LEADINGMEDIA INDEXES"
+    
     # Specify the indexes you want, with ('index_name', 'index_type')
-    wanted = (('hasMedia', 'BooleanIndex'),
-              ('leadMedia', 'FieldIndex'),
-              ('getLeadMediaTag', 'FieldIndex'),
-              ('getLeadImageTag', 'FieldIndex'),
+    wanted = (('hasMedia', 'FieldIndex'),
+              ('leadMedia', 'FieldIndex')
               )
     
     indexables = []
@@ -49,17 +49,12 @@ def add_catalog_indexes(context, logger=None):
         logger.info("Indexing new indexes %s.", ', '.join(indexables))
         catalog.manage_reindexIndex(ids=indexables)
 
-
 def import_various(context):
     """Import step for configuration that is not handled in xml files.
     """
     # Only run step if a flag file is present
-    if context.readDataFile('collective_media-default.txt') is None:
+    if context.readDataFile('collective_leadingmedia-default.txt') is None:
         return
-    logger = context.getLogger('collective.media')
+    logger = context.getLogger('collective.leadingmedia')
     site = context.getSite()
     add_catalog_indexes(site, logger)
-    
-    
-    
-    
